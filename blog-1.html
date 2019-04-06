@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>First Blog Post!</title>
+ <title>Python Visualization</title>
  <!-- Latest compiled and minified CSS -->
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
  <div class="container">
@@ -12,9 +12,1279 @@
  <div class="container">
 <div class="row">
  <div class="col-md-8">
-  <h3>First Blog Post!</h3>
+  <h3>Python Visualization</h3>
   <label>2019-03-28</label>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Cursus vitae congue mauris rhoncus. Pulvinar neque laoreet suspendisse interdum. Eu nisl nunc mi ipsum faucibus vitae. Sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis. Nibh tortor id aliquet lectus proin nibh nisl. Sit amet venenatis urna cursus eget. Amet consectetur adipiscing elit duis. Quam pellentesque nec nam aliquam sem et tortor. Congue nisi vitae suscipit tellus.</p>
+  <p>Having struggled with Python visualizations for a week, I decided to come up with a simple guide to help myself out when it comes to picking up visualization tools for specific plots. There are a number of them and each is good for quite different purposes. </p>
+<h3>matplotlib</h3>
+<p>Matplotlib is the basis of statistical plotting in Python which many other visualization tools (e.g., pandas and seaborn) are built on. It is very versatile (which means you can plot anything) but can be verbose and complex to implement. Also, the plots produced are often amazingly ugly. Use it for simple and quick basic plots like line plots. Otherwise, avoid it unless you want to make complex, highly customized plots. </p>
+<h3>pandas</h3>
+<p>Some of the DataFrame inbedded methods are quite convenient to use, such as
+- histogram
+- scatter plot
+- etc</p>
+<h3>seaborn</h3>
+<p>It is well integrated with Pandas DataFrames and has high-level commands (with automatic labelling and grouping) which make plotting easy. It can be the go-to library for a number of well-defined plots such as
+- heatmaps (for counts and correlation matrices)
+- pairplots (for exploring inter-correlations)
+- facetgrid (for plotting multiple subplots in different categories)
+- cluster maps (for cluster analysis) # to be added</p>
+<h3>altair</h3>
+<p>Altair is a declarative statistical visualization libary based on Vega and Vega-Lite. It is elegant and simple, and produces <strong>beautiful</strong> plots. It also easily makes interactive plots. In short, it is amazing. Use it whenever you can.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+</pre></div>
+
+
+<h1>Matplotlib</h1>
+<h2>plt.plot</h2>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">5</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>Text(0,0.5,&#39;y&#39;)
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_7_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;m^&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1798d630&gt;,
+ &lt;matplotlib.lines.Line2D at 0x17a13128&gt;,
+ &lt;matplotlib.lines.Line2D at 0x17a13978&gt;]
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_8_1.png"></p>
+<h1>Pandas</h1>
+<h2>pd.plot</h2>
+<p><code>df.plot</code> plots the index against each column, so we often need to specify the two columns againts which we want to plot. A often used method is <code>df.groupby</code>, which summarizes the data by groups and the group names become the index to be passed to <code>df.plot</code>.</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># plots the index against each column</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x8c71978&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_13_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="c1"># so we need to specify the axes</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x8f642e8&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_14_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;scatter&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xa7e6898&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_15_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;country&#39;</span><span class="p">:[</span><span class="s1">&#39;Australia&#39;</span><span class="p">,</span> <span class="s1">&#39;Australia&#39;</span><span class="p">,</span> <span class="s1">&#39;USA&#39;</span><span class="p">,</span><span class="s1">&#39;USA&#39;</span><span class="p">,</span><span class="s1">&#39;USA&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;year&#39;</span><span class="p">:[</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="mi">1980</span><span class="p">,</span> <span class="mi">1981</span><span class="p">,</span> <span class="mi">1982</span><span class="p">],</span>
+                    <span class="s1">&#39;unemployment&#39;</span><span class="p">:[</span><span class="mf">6.06</span><span class="p">,</span> <span class="mf">5.72</span><span class="p">,</span> <span class="mf">7.14</span><span class="p">,</span> <span class="mf">7.60</span><span class="p">,</span> <span class="mf">9.71</span><span class="p">]})</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df2</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>country</th>
+      <th>year</th>
+      <th>unemployment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Australia</td>
+      <td>2015</td>
+      <td>6.06</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Australia</td>
+      <td>2016</td>
+      <td>5.72</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>USA</td>
+      <td>1980</td>
+      <td>7.14</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>USA</td>
+      <td>1981</td>
+      <td>7.60</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>USA</td>
+      <td>1982</td>
+      <td>9.71</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">)[</span><span class="s1">&#39;unemployment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> 
+<span class="c1"># now it has meaningful index that can be passed directly to .plot()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>country
+Australia    5.89
+USA          8.15
+Name: unemployment, dtype: float64
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">)[</span><span class="s1">&#39;unemployment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xa743438&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_19_1.png"></p>
+<h1>Seaborn</h1>
+<p>First, some univariate plots:</p>
+<h2>Histograms and KDE</h2>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span> <span class="c1"># setting the style of Seaborn plots</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[[</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]],</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3.287752</td>
+      <td>0.964413</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-1.493281</td>
+      <td>-1.114161</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.473470</td>
+      <td>0.679222</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.760759</td>
+      <td>1.256521</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.152063</td>
+      <td>0.595138</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;xy&#39;</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_26_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="c1"># if both cols passed at the same time</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xd444e10&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_27_1.png"></p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;xy&#39;</span><span class="p">:</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">shade</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_28_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>(0, 0.35)
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_29_1.png"></p>
+<h2>jointplot</h2>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.JointGrid at 0x12e8f710&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_31_1.png"></p>
+<h2>pairplot</h2>
+<p>Joint plots for more than two dimensions. Useful for exploring multivariate correlations.</p>
+<div class="highlight"><pre><span></span><span class="n">iris</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;iris&#39;</span><span class="p">)</span>
+<span class="n">iris</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_length</th>
+      <th>sepal_width</th>
+      <th>petal_length</th>
+      <th>petal_width</th>
+      <th>species</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>setosa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>setosa</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>setosa</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>setosa</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>setosa</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">iris</span><span class="p">,</span><span class="n">hue</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x124c5a90&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_35_1.png"></p>
+<h2>facetgrid</h2>
+<p>To make histograms on subsets of categories.</p>
+<div class="highlight"><pre><span></span><span class="n">tips</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tips&#39;</span><span class="p">)</span>
+<span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>total_bill</th>
+      <th>tip</th>
+      <th>sex</th>
+      <th>smoker</th>
+      <th>day</th>
+      <th>time</th>
+      <th>size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>16.99</td>
+      <td>1.01</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10.34</td>
+      <td>1.66</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>21.01</td>
+      <td>3.50</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.68</td>
+      <td>3.31</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>24.59</td>
+      <td>3.61</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;tip_pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;tip&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;total_bill&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>total_bill</th>
+      <th>tip</th>
+      <th>sex</th>
+      <th>smoker</th>
+      <th>day</th>
+      <th>time</th>
+      <th>size</th>
+      <th>tip_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>16.99</td>
+      <td>1.01</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+      <td>5.944673</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10.34</td>
+      <td>1.66</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+      <td>16.054159</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>21.01</td>
+      <td>3.50</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+      <td>16.658734</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.68</td>
+      <td>3.31</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+      <td>13.978041</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>24.59</td>
+      <td>3.61</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>4</td>
+      <td>14.680765</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">tips</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">margin_titles</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">,</span> <span class="s1">&#39;tip_pct&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
+<span class="c1"># bins make sure every graph has the same x scale</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x130396a0&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_41_1.png"></p>
+<p>Next, some multivariate plots:</p>
+<h2>factorplot</h2>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;ticks&#39;</span><span class="p">):</span> <span class="c1"># applying the style to the whole block</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="s1">&#39;day&#39;</span><span class="p">,</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> 
+                       <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;pastel&#39;</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_axis_labels</span><span class="p">(</span><span class="s1">&#39;Day&#39;</span><span class="p">,</span><span class="s1">&#39;Total Bill&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_44_0.png"></p>
+<div class="highlight"><pre><span></span><span class="n">planets</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;planets&#39;</span><span class="p">)</span>
+<span class="n">planets</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>method</th>
+      <th>number</th>
+      <th>orbital_period</th>
+      <th>mass</th>
+      <th>distance</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Radial Velocity</td>
+      <td>1</td>
+      <td>269.300</td>
+      <td>7.10</td>
+      <td>77.40</td>
+      <td>2006</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Radial Velocity</td>
+      <td>1</td>
+      <td>874.774</td>
+      <td>2.21</td>
+      <td>56.95</td>
+      <td>2008</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Radial Velocity</td>
+      <td>1</td>
+      <td>763.000</td>
+      <td>2.60</td>
+      <td>19.84</td>
+      <td>2011</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Radial Velocity</td>
+      <td>1</td>
+      <td>326.030</td>
+      <td>19.40</td>
+      <td>110.62</td>
+      <td>2007</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Radial Velocity</td>
+      <td>1</td>
+      <td>516.220</td>
+      <td>10.50</td>
+      <td>119.47</td>
+      <td>2009</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">):</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">planets</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_46_0.png"></p>
+<div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">):</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">planets</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span>
+                       <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">2015</span><span class="p">))</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_ylabels</span><span class="p">(</span><span class="s1">&#39;Number of Planets Discovered&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_47_0.png"></p>
+<h2>lmplot</h2>
+<div class="highlight"><pre><span></span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>total_bill</th>
+      <th>tip</th>
+      <th>sex</th>
+      <th>smoker</th>
+      <th>day</th>
+      <th>time</th>
+      <th>size</th>
+      <th>tip_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>16.99</td>
+      <td>1.01</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+      <td>5.944673</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10.34</td>
+      <td>1.66</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+      <td>16.054159</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>21.01</td>
+      <td>3.50</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>3</td>
+      <td>16.658734</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>23.68</td>
+      <td>3.31</td>
+      <td>Male</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>2</td>
+      <td>13.978041</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>24.59</td>
+      <td>3.61</td>
+      <td>Female</td>
+      <td>No</td>
+      <td>Sun</td>
+      <td>Dinner</td>
+      <td>4</td>
+      <td>14.680765</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;tip&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x15fba860&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_50_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;tip&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;smoker&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">,</span>
+          <span class="n">markers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x18c0a748&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_51_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;tip&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;smoker&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">,</span>
+          <span class="n">markers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">Yes</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">No</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x18c76588&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_52_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;tip&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;day&#39;</span><span class="p">,</span> 
+           <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x1a3aecf8&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_53_1.png"></p>
+<h2>heatmap</h2>
+<div class="highlight"><pre><span></span><span class="n">flights</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;flights&#39;</span><span class="p">)</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>year</th>
+      <th>month</th>
+      <th>passengers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1949</td>
+      <td>January</td>
+      <td>112</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1949</td>
+      <td>February</td>
+      <td>118</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1949</td>
+      <td>March</td>
+      <td>132</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1949</td>
+      <td>April</td>
+      <td>129</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1949</td>
+      <td>May</td>
+      <td>121</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;passengers&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>year</th>
+      <th>1949</th>
+      <th>1950</th>
+      <th>1951</th>
+      <th>1952</th>
+      <th>1953</th>
+      <th>1954</th>
+      <th>1955</th>
+      <th>1956</th>
+      <th>1957</th>
+      <th>1958</th>
+      <th>1959</th>
+      <th>1960</th>
+    </tr>
+    <tr>
+      <th>month</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>January</th>
+      <td>112</td>
+      <td>115</td>
+      <td>145</td>
+      <td>171</td>
+      <td>196</td>
+      <td>204</td>
+      <td>242</td>
+      <td>284</td>
+      <td>315</td>
+      <td>340</td>
+      <td>360</td>
+      <td>417</td>
+    </tr>
+    <tr>
+      <th>February</th>
+      <td>118</td>
+      <td>126</td>
+      <td>150</td>
+      <td>180</td>
+      <td>196</td>
+      <td>188</td>
+      <td>233</td>
+      <td>277</td>
+      <td>301</td>
+      <td>318</td>
+      <td>342</td>
+      <td>391</td>
+    </tr>
+    <tr>
+      <th>March</th>
+      <td>132</td>
+      <td>141</td>
+      <td>178</td>
+      <td>193</td>
+      <td>236</td>
+      <td>235</td>
+      <td>267</td>
+      <td>317</td>
+      <td>356</td>
+      <td>362</td>
+      <td>406</td>
+      <td>419</td>
+    </tr>
+    <tr>
+      <th>April</th>
+      <td>129</td>
+      <td>135</td>
+      <td>163</td>
+      <td>181</td>
+      <td>235</td>
+      <td>227</td>
+      <td>269</td>
+      <td>313</td>
+      <td>348</td>
+      <td>348</td>
+      <td>396</td>
+      <td>461</td>
+    </tr>
+    <tr>
+      <th>May</th>
+      <td>121</td>
+      <td>125</td>
+      <td>172</td>
+      <td>183</td>
+      <td>229</td>
+      <td>234</td>
+      <td>270</td>
+      <td>318</td>
+      <td>355</td>
+      <td>363</td>
+      <td>420</td>
+      <td>472</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">flights</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1a69e438&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_58_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(),</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">)</span> <span class="c1"># divergent color code</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1829ecf8&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_60_1.png"></p>
+<h1>altair</h1>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">altair</span> <span class="kn">as</span> <span class="nn">alt</span>
+<span class="n">alt</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="s1">&#39;notebook&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>RendererRegistry.enable(&#39;notebook&#39;)
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">cars</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;cars&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">cars</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Acceleration</th>
+      <th>Cylinders</th>
+      <th>Displacement</th>
+      <th>Horsepower</th>
+      <th>Miles_per_Gallon</th>
+      <th>Name</th>
+      <th>Origin</th>
+      <th>Weight_in_lbs</th>
+      <th>Year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12.0</td>
+      <td>8</td>
+      <td>307.0</td>
+      <td>130.0</td>
+      <td>18.0</td>
+      <td>chevrolet chevelle malibu</td>
+      <td>USA</td>
+      <td>3504</td>
+      <td>1970-01-01</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>11.5</td>
+      <td>8</td>
+      <td>350.0</td>
+      <td>165.0</td>
+      <td>15.0</td>
+      <td>buick skylark 320</td>
+      <td>USA</td>
+      <td>3693</td>
+      <td>1970-01-01</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>11.0</td>
+      <td>8</td>
+      <td>318.0</td>
+      <td>150.0</td>
+      <td>18.0</td>
+      <td>plymouth satellite</td>
+      <td>USA</td>
+      <td>3436</td>
+      <td>1970-01-01</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12.0</td>
+      <td>8</td>
+      <td>304.0</td>
+      <td>150.0</td>
+      <td>16.0</td>
+      <td>amc rebel sst</td>
+      <td>USA</td>
+      <td>3433</td>
+      <td>1970-01-01</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10.5</td>
+      <td>8</td>
+      <td>302.0</td>
+      <td>140.0</td>
+      <td>17.0</td>
+      <td>ford torino</td>
+      <td>USA</td>
+      <td>3449</td>
+      <td>1970-01-01</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin:N&#39;</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1c7f0f98&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_65_2.png"></p>
+<h2>Faceting</h2>
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_circle</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">facet</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1da10748&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_67_2.png"></p>
+<p>Changing the opacity:</p>
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_bar</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon:Q&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1c857a90&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_69_2.png"></p>
+<h2>Interactions</h2>
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">facet</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1cb3ffd0&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_71_2.png"></p>
+<h3>Selections</h3>
+<p>-<code>selection_single()</code>: selecting single element at a time</p>
+<p>-<code>selection_multi()</code>: selecting multiple items at once through clicking or mouseover</p>
+<p>-<code>selection_interval()</code>: selecting multiple items through brushing</p>
+<div class="highlight"><pre><span></span><span class="n">brush</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">selection_interval</span><span class="p">()</span>
+
+<span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">brush</span><span class="p">,</span> <span class="s1">&#39;Origin&#39;</span><span class="p">,</span> <span class="n">alt</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;lightgray&#39;</span><span class="p">))</span>
+<span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span>
+    <span class="n">selection</span><span class="o">=</span><span class="n">brush</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1d5d82e8&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_74_2.png"></p>
+<h2>histograms</h2>
+<p><code>count()</code> aggregation function</p>
+<div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_bar</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span><span class="nb">bin</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">BinParams</span><span class="p">(</span><span class="n">maxbins</span><span class="o">=</span><span class="mi">40</span><span class="p">)),</span> <span class="c1"># or simply: bin=True</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;count(*):Q&#39;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">facet</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1d3b62e8&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_77_2.png"></p>
+<h2>Layers</h2>
+<p>Layers with interaction:</p>
+<div class="highlight"><pre><span></span><span class="c1"># the &#39;empty&#39; setting akes all text hidden before any mouseover occurs</span>
+<span class="n">pointer</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">selection_single</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;mouseover&#39;</span><span class="p">,</span><span class="n">nearest</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">empty</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Miles_per_Gallon&#39;</span><span class="p">,</span> 
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span>
+<span class="p">)</span>
+
+<span class="n">chart</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span><span class="n">selection</span><span class="o">=</span><span class="n">pointer</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span><span class="p">),</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">mark_text</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">dy</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">pointer</span><span class="p">,</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span><span class="n">alt</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))),</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">cars</span>
+<span class="p">)</span>
+
+<span class="n">chart</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1da10588&gt;
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_80_2.png"></p>
  </div>
 </div>
  </div>
