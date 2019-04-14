@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>ROC-AUC Explained</title>
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+ <div class="container">
+  <h1><a href="https://mollyteng.github.io/blog">my blog</a></h1>
+ </div>
+</head>
+<body>
+ <div class="container">
+<div class="row">
+ <div class="col-md-8">
+  <h3>ROC-AUC Explained</h3>
+  <label>2019-03-12</label>
+  <p>ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encounter a ROC plot. This time I'm going to get to the bottom and get everything clear.  </p>
+<h3>Confusion Matrix</h3>
+<p>To explain ROC, first we need an understanding of the confusion matrix.</p>
+<p>For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  </p>
+<table>
+<thead>
+<tr>
+<th>Mushrooms</th>
+<th>Actully Edible</th>
+<th>Actually Poisonous</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Predicted Edible</td>
+<td>482 (TN)</td>
+<td>6 (FN)</td>
+</tr>
+<tr>
+<td>Predicted Poisonous</td>
+<td>84 (FP)</td>
+<td>428 (TP)</td>
+</tr>
+</tbody>
+</table>
+<p>Here, the correct predictions are the 482 edible mushrooms that are predicted as edible, and the 428 poisonous mushrooms that are predicted as poisonous. So our accuracy is (482+428)/1000 = 91%. Suppose we call being poisonous a "positive" (more alarming) event, then the correctly identified poisonous mushrooms are True Positives (TP) and the correctly identified edible ones are True Negatives (TN). However, we are more concerned about the errors in this classification. We call the actually edible ones that got misclassified as poisonous the False Positives (FP) and the actually poisonous ones that are wrongfully predicted as edible the False Negatives (FN). In this case, the two types of errors are not equally costly, because the FPs are just a few edible mushroom that got thrown away, but the FNs are truly dangerous because eating one can be fatal.  </p>
+<h3>Sensitivity, Specificity, Precision, and F1 Score</h3>
+<p>Because different mistakes carry different costs (e.g., the FP and FN in the mushroom classfier), sometimes we want to minimize a certain type of error besides maximizing the overall accuracy. There are 4 types of measures that take into consideration of the errors:</p>
+<ul>
+<li>
+<p><strong>Sensitivity</strong> (True Positive Rate, <strong>Recall</strong>) = TP/(TP+FN)</p>
+</li>
+<li>
+<p><strong>Specificity</strong> (True Negative Rate) = TN/(FP+TN)</p>
+</li>
+<li>
+<p><strong>Precision</strong> (Positive Predictive Value) = TP/(TP+FP)</p>
+</li>
+<li>
+<p><strong>F1 Score</strong> = 2Precision*Recall/(Precision+Recall)</p>
+</li>
+</ul>
+<p>Here, <strong>sensitivity</strong> is the true positive rate (also called <strong>recall</strong>), because it is the predicted positives over all the actual positives. <strong>Specificity</strong> is the true negative rate, as it is the predicted negatives over all the acutal negatives. <strong>Precision</strong> is the positive predictive value, since it is the true positives over all predicted positives. <strong>F1 score</strong> is the harmonic mean of the precision and recall, taking both FP and FN into account.</p>
+<p>The ROC is actually based on sensitivity and specificity.</p>
+<h3>Receiver Operating Characteristic Curve (ROC)</h3>
+<p>Now let's spin up some data to visualize the relationship between TN, TP, FN and FP. </p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># data generation</span>
+<span class="k">def</span> <span class="nf">generate_X</span><span class="p">(</span><span class="n">mean1</span><span class="p">,</span> <span class="n">mean2</span><span class="p">,</span> <span class="n">mean3</span><span class="p">):</span>
+    <span class="c1"># generate random normal features for distribution 1</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="n">x3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="c1"># generate random normal features for distribution 2</span>
+    <span class="n">x4</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="n">mean1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="n">x5</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="n">mean2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="n">x6</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="n">mean3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+    <span class="c1"># concatenate the features </span>
+    <span class="n">X1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">x4</span><span class="p">,</span> <span class="n">x5</span><span class="p">,</span> <span class="n">x6</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># label the distributions</span>
+    <span class="n">X1</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">X2</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># put the distributions together</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span><span class="s1">&#39;x2&#39;</span><span class="p">,</span><span class="s1">&#39;x3&#39;</span><span class="p">,</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+    <span class="c1"># calculate the probability of being in label 1 using the logit link</span>
+    <span class="n">proba_y</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">x1</span><span class="o">+</span><span class="n">X</span><span class="o">.</span><span class="n">x2</span><span class="o">+</span><span class="n">X</span><span class="o">.</span><span class="n">x3</span><span class="p">)))</span>
+    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;proba&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proba_y</span>
+    <span class="c1"># plot the probability distribution</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">label</span><span class="o">==</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;proba&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">label</span><span class="o">==</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;proba&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Distribution of Prob(label=1)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Predicted Prob(label=1)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">X</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">X1</span> <span class="o">=</span> <span class="n">generate_X</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_16_0.png"></p>
+<p>We first generate two distributions using linear combination of random normal features whose means are symmetric to each other with respect to x=0. The data points in the first distribution are then assigned label value of 1, and the second 0. These are the true labels of the data points. Then we calculate the probability of each data point being classified as 1 or 0 using a logistic link. Plotting these probabilities, we can see that the first distribution (the Blue one) has a much higher frequency of being classified as 1, while the second distribution (the Orange one) has a much higher tendency of being classified as 0. The two distributions look quite separated, which is exactly what we want here because this indicates that the data can be separated well by a logistic classifier. We can then fit it into a logistic regression model to get the predicted probabilities and predicted labels needed to calculate TP, FP, TN, and FN.   </p>
+<div class="highlight"><pre><span></span><span class="c1"># prepare for training</span>
+<span class="k">def</span> <span class="nf">label_data</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">]]</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span> <span class="o">=</span> <span class="n">label_data</span><span class="p">(</span><span class="n">X1</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># logistic regression</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="k">def</span> <span class="nf">logreg</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="n">logreg</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;lbfgs&#39;</span><span class="p">)</span>
+    <span class="n">logreg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;predict_proba&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logreg</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_train</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;preds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logreg</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">logreg</span><span class="p">(</span><span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span><span class="p">,</span> <span class="n">X1</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Now we plot the predicted probablities:</p>
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">X1</span><span class="p">[</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="o">==</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;predict_proba&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="n">X1</span><span class="p">[</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="o">==</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;predict_proba&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Distribution of Prob(label=1)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Predicted Prob(label=1)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;TP&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;TN&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_23_0.png"></p>
+<p>We can see that the model-predicted probabilites are similar to the probabilities we calculated using logit link when generating the data. Now, by default the model classifies any data point with a predicted probability larger than 0.5 as being in class 1, and else class 0. This can be visualized in the plot above, where the red dotted line is x=0.5. The right hand side of the blue distribution got correctly classifed as label 1, so they are the TPs. Similarly, the left hand side of the orange distribution got correctly classifed as label 0, thus the TNs. The right tail of the orange distribution are the ones that are actually label 0 but got predicted to be 1 because of their high probabilities; they are therefore the FPs. In the same fashion, the left tail of the blue distribution are the FNs.  </p>
+<p>We can obtain the TP, TN, FP and FN by calling confusion matrix directly from scikit learn modules to save some effors: </p>
+<div class="highlight"><pre><span></span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">X1</span><span class="o">.</span><span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;tn={tn}, fp={fp}, fn={fn}, tp={tp}&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>tn=759, fp=241, fn=232, tp=768
+</pre></div>
+
+
+<p>Because ROC is based on sensitivy and specificity, we will calculate them as well:</p>
+<div class="highlight"><pre><span></span><span class="n">sens</span> <span class="o">=</span> <span class="n">tp</span><span class="o">/</span><span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">fn</span><span class="p">)</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">tn</span><span class="o">/</span><span class="p">(</span><span class="n">fp</span><span class="o">+</span><span class="n">tn</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;sens={sens}, spec={spec}&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>sens=0.768, spec=0.759
+</pre></div>
+
+
+<p>Now we can finally come to explaining ROC. The ROC is the curve we will get if we plot 1-specificity on the x-axis and sensitivity on the y-axis for every pair of sensitivity/specificity values we obtain by moving the cut-off point for classifying 0/1 on the predicted probablities from x=0.0 to x=1.0. For example, now we are using cut-off as x=0.5, and we obtain sensitivity=0.77 and specificity=0.76. If we plot it, we will get a single point: </p>
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">spec</span><span class="p">,</span> <span class="n">sens</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_30_0.png"></p>
+<p>If we move the cut-off to x=0.8, for example, which means data points with a predicted probability equal to or higher than 0.8 of being in the label 1 class got classified as label 1, else label 0, then we will get a set of different classification results (in terms of TP, TN, FP and FN):</p>
+<div class="highlight"><pre><span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">predict_proba</span> <span class="o">&gt;=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">tn1</span><span class="p">,</span> <span class="n">fp1</span><span class="p">,</span> <span class="n">fn1</span><span class="p">,</span> <span class="n">tp1</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">sens1</span> <span class="o">=</span> <span class="n">tp1</span><span class="o">/</span><span class="p">(</span><span class="n">tp1</span><span class="o">+</span><span class="n">fn1</span><span class="p">)</span>
+<span class="n">spec1</span> <span class="o">=</span> <span class="n">tn1</span><span class="o">/</span><span class="p">(</span><span class="n">tn1</span><span class="o">+</span><span class="n">fp1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;tn={tn1}, fp={fp1}, fn={fn1}, tp={tp1}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;sens={sens1}, spec={spec1}&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>tn=956, fp=44, fn=602, tp=398
+sens=0.398, spec=0.956
+</pre></div>
+
+
+<p>Now we can plot the two points together:</p>
+<div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">spec</span><span class="p">,</span> <span class="n">sens</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">spec1</span><span class="p">,</span> <span class="n">sens1</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_34_0.png"></p>
+<p>If we keep doing this for every possible cut-off value (i.e., ranging from x=0.0 to x=1.0), we will obtain a lot of points and when they connect and form a curve, we have the ROC. It indicates how well the two distributions are separated by our model. If the two distributions are very well separated (as there are very few FPs or FNs), the ROC will be higher close to the upper left corner, like this: </p>
+<div class="highlight"><pre><span></span><span class="c1"># define a function to plot ROC</span>
+<span class="k">def</span> <span class="nf">plot_roc</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">sens_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">spec_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cutoff</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;preds_{cutoff}&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">predict_proba</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;preds_{cutoff}&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">sens</span> <span class="o">=</span> <span class="n">tp</span><span class="o">/</span><span class="p">(</span><span class="n">tp</span><span class="o">+</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">tn</span><span class="o">/</span><span class="p">(</span><span class="n">tn</span><span class="o">+</span><span class="n">fp</span><span class="p">)</span>
+        <span class="n">sens_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sens</span><span class="p">)</span>
+        <span class="n">spec_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="n">roc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sens&#39;</span><span class="p">:</span><span class="n">sens_list</span><span class="p">,</span> <span class="s1">&#39;spec&#39;</span><span class="p">:</span><span class="n">spec_list</span><span class="p">}</span>
+    <span class="n">roc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">roc</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">roc</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">roc</span><span class="o">.</span><span class="n">sens</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># generate two distributions that are far away from each other so they </span>
+<span class="c1"># are easily separable </span>
+<span class="n">X2</span> <span class="o">=</span> <span class="n">generate_X</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_37_0.png"></p>
+<div class="highlight"><pre><span></span><span class="c1"># plot the ROC</span>
+<span class="n">X2_train</span><span class="p">,</span> <span class="n">y2_train</span> <span class="o">=</span> <span class="n">label_data</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
+<span class="n">logreg</span><span class="p">(</span><span class="n">X2_train</span><span class="p">,</span> <span class="n">y2_train</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span>
+<span class="n">plot_roc</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">y2_train</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_38_0.png"></p>
+<p>A ROC like this means the model is doing a good job separating the classes and the predictions are fairly accurate.</p>
+<p>If the model doesn't do a good job separating the two classes (i.e., a lot of FPs and FNs), the ROC will be close to the diagonal, like this:</p>
+<div class="highlight"><pre><span></span><span class="c1"># generate two distributions that are highly overlapped so they </span>
+<span class="c1"># are difficult to separate </span>
+<span class="n">X3</span> <span class="o">=</span> <span class="n">generate_X</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_41_0.png"></p>
+<div class="highlight"><pre><span></span><span class="c1"># plot the ROC</span>
+<span class="n">X3_train</span><span class="p">,</span> <span class="n">y3_train</span> <span class="o">=</span> <span class="n">label_data</span><span class="p">(</span><span class="n">X3</span><span class="p">)</span>
+<span class="n">logreg</span><span class="p">(</span><span class="n">X3_train</span><span class="p">,</span> <span class="n">y3_train</span><span class="p">,</span> <span class="n">X3</span><span class="p">)</span>
+<span class="n">plot_roc</span><span class="p">(</span><span class="n">X3</span><span class="p">,</span> <span class="n">y3_train</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_42_0.png"></p>
+<p>A ROC close to the diagonal means that the model is performing poorly at separating the two classes and its predictions are almost like random guesses.</p>
+<p>A usual ROC generally looks like this:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Create figure.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+<span class="c1"># Create threshold values.</span>
+<span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># Define function to calculate sensitivity. (True positive rate.)</span>
+<span class="k">def</span> <span class="nf">TPR</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">true_col</span><span class="p">,</span> <span class="n">pred_prob_col</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="n">true_positive</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">true_col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pred_prob_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">false_negative</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">true_col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pred_prob_col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">true_positive</span> <span class="o">/</span> <span class="p">(</span><span class="n">true_positive</span> <span class="o">+</span> <span class="n">false_negative</span><span class="p">)</span>
+
+
+<span class="c1"># Define function to calculate 1 - specificity. (False positive rate.)</span>
+<span class="k">def</span> <span class="nf">FPR</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">true_col</span><span class="p">,</span> <span class="n">pred_prob_col</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="n">true_negative</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">true_col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pred_prob_col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">false_positive</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">true_col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pred_prob_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">true_negative</span> <span class="o">/</span> <span class="p">(</span><span class="n">true_negative</span> <span class="o">+</span> <span class="n">false_positive</span><span class="p">))</span>
+
+<span class="c1"># Calculate sensitivity &amp; 1-specificity for each threshold between 0 and 1.</span>
+<span class="n">tpr_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">TPR</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;predict_proba&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span> <span class="k">for</span> <span class="n">prob</span> <span class="ow">in</span> <span class="n">thresholds</span><span class="p">]</span>
+<span class="n">fpr_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">FPR</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;predict_proba&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span> <span class="k">for</span> <span class="n">prob</span> <span class="ow">in</span> <span class="n">thresholds</span><span class="p">]</span>
+
+<span class="c1"># Plot ROC curve.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_values</span><span class="p">,</span> <span class="c1"># False Positive Rate on X-axis</span>
+         <span class="n">tpr_values</span><span class="p">,</span> <span class="c1"># True Positive Rate on Y-axis</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ROC Curve&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot baseline. (Perfect overlap between the two populations.)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+         <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">,</span>
+         <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Label axes.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Receiver Operating Characteristic Curve&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Sensitivity&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;1 - Specificity&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+<span class="c1"># Create legend.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">);</span>
+</pre></div>
+
+
+<p><img alt="png" src="images/ROC_AUC_explained_45_0.png"></p>
+<h3>Area Under Curve (AUC)</h3>
+<p>Now we are left with the final concept, AUC, which is the area under the ROC. It is a very straight forward measure of how well a model performs, because the higher up the ROC to the upper left corner, the larger the AUC will be. We want our model's AUC to be as large as possible, ranging from 0.5 to 1.0 where 0.5 is the worst model possible and 1.0 is a perfect classifier.</p>
+<p>We can obtain the AUC directly by calling scikit learn module:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;AUC={roc_auc_score(X1.label, X1.preds)}&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>AUC=0.7635
+</pre></div>
+
+
+<h3>AOC</h3>
+<p>Finally, per Max's request, I'm also going to show what is AOC (Area Over Curve). And that literally is:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="c1"># from IPython.core.display import HTML</span>
+<span class="n">Image</span><span class="p">(</span><span class="s1">&#39;AOC.jpg&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="jpeg" src="images/ROC_AUC_explained_52_0.jpeg"></p>
+<p>Writing this post tremendously helped me understand the mechanism behind ROC. Hope it's helpful to you too.</p>
+ </div>
+</div>
+ </div>
+</body>
+</html>
