@@ -3,7 +3,7 @@ Date: 2019-04-14 10:20
 Tags: python
 Slug: blog-2
 
-ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encounter a ROC plot. This time I'm going to get to the bottom and get everything clear.  
+ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encountered a ROC plot. This time I'm going to get to the bottom and get everything clear.  
 
 ### Confusion Matrix
 

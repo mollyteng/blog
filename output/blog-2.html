@@ -14,7 +14,7 @@
  <div class="col-md-8">
   <h3>ROC-AUC Explained</h3>
   <label>2019-04-14</label>
-  <p>ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encounter a ROC plot. This time I'm going to get to the bottom and get everything clear.  </p>
+  <p>ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encountered a ROC plot. This time I'm going to get to the bottom and get everything clear.  </p>
 <h3>Confusion Matrix</h3>
 <p>To explain ROC, first we need an understanding of the confusion matrix.</p>
 <p>For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  </p>

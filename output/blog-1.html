@@ -32,6 +32,7 @@
 <p>Altair is a declarative statistical visualization libary based on Vega and Vega-Lite. It is elegant and simple, and produces <strong>beautiful</strong> plots. It also easily makes interactive plots. In short, it is amazing. Use it whenever you can.</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
 </pre></div>
 
 
@@ -53,7 +54,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>Text(0,0.5,&#39;y&#39;)
+<div class="highlight"><pre><span></span>Text(0, 0.5, &#39;y&#39;)
 </pre></div>
 
 
@@ -74,9 +75,9 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x1798d630&gt;,
- &lt;matplotlib.lines.Line2D at 0x17a13128&gt;,
- &lt;matplotlib.lines.Line2D at 0x17a13978&gt;]
+<div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f739ab26630&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f739aaccc50&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f739aaccf98&gt;]
 </pre></div>
 
 
@@ -92,7 +93,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x8c71978&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739a773da0&gt;
 </pre></div>
 
 
@@ -101,7 +102,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x8f642e8&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739aa773c8&gt;
 </pre></div>
 
 
@@ -110,7 +111,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xa7e6898&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739a9e2f60&gt;
 </pre></div>
 
 
@@ -121,25 +122,11 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">df2</span>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -181,7 +168,6 @@
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">)[</span><span class="s1">&#39;unemployment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> 
 <span class="c1"># now it has meaningful index that can be passed directly to .plot()</span>
@@ -199,7 +185,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xa743438&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739af3a518&gt;
 </pre></div>
 
 
@@ -217,25 +203,11 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -246,44 +218,52 @@ Name: unemployment, dtype: float64
   <tbody>
     <tr>
       <th>0</th>
-      <td>3.287752</td>
-      <td>0.964413</td>
+      <td>-3.706836</td>
+      <td>-2.738933</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>-1.493281</td>
-      <td>-1.114161</td>
+      <td>1.862120</td>
+      <td>1.403838</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>1.473470</td>
-      <td>0.679222</td>
+      <td>-0.116846</td>
+      <td>-0.057492</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.760759</td>
-      <td>1.256521</td>
+      <td>0.598859</td>
+      <td>-0.080863</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>1.152063</td>
-      <td>0.595138</td>
+      <td>0.390465</td>
+      <td>0.250044</td>
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;xy&#39;</span><span class="p">:</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 
 
-<p><img alt="png" src="images/python_visualization_26_0.png"></p>
+<div class="highlight"><pre><span></span>/home/molly/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py:6521: MatplotlibDeprecationWarning: 
+The &#39;normed&#39; kwarg was deprecated in Matplotlib 2.1 and will be removed in 3.1. Use &#39;density&#39; instead.
+  alternative=&quot;&#39;density&#39;&quot;, removal=&quot;3.1&quot;)
+/home/molly/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py:6521: MatplotlibDeprecationWarning: 
+The &#39;normed&#39; kwarg was deprecated in Matplotlib 2.1 and will be removed in 3.1. Use &#39;density&#39; instead.
+  alternative=&quot;&#39;density&#39;&quot;, removal=&quot;3.1&quot;)
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_26_1.png"></p>
 <div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="c1"># if both cols passed at the same time</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0xd444e10&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f7398608588&gt;
 </pre></div>
 
 
@@ -311,7 +291,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.JointGrid at 0x12e8f710&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.JointGrid at 0x7f7398440d30&gt;
 </pre></div>
 
 
@@ -319,25 +299,11 @@ Name: unemployment, dtype: float64
 <h2>pairplot</h2>
 <p>Joint plots for more than two dimensions. Useful for exploring multivariate correlations.</p>
 <div class="highlight"><pre><span></span><span class="n">iris</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;iris&#39;</span><span class="p">)</span>
-<span class="n">iris</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">HTML</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -391,39 +357,31 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">iris</span><span class="p">,</span><span class="n">hue</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x124c5a90&gt;
+<div class="highlight"><pre><span></span><span class="o">/</span><span class="nt">home</span><span class="o">/</span><span class="nt">molly</span><span class="o">/</span><span class="nt">anaconda3</span><span class="o">/</span><span class="nt">lib</span><span class="o">/</span><span class="nt">python3</span><span class="p">.</span><span class="nc">7</span><span class="o">/</span><span class="nt">site-packages</span><span class="o">/</span><span class="nt">seaborn</span><span class="o">/</span><span class="nt">axisgrid</span><span class="p">.</span><span class="nc">py</span><span class="p">:</span><span class="nd">2065</span><span class="o">:</span> <span class="nt">UserWarning</span><span class="o">:</span> <span class="nt">The</span> <span class="err">`</span><span class="nt">size</span><span class="err">`</span> <span class="nt">parameter</span> <span class="nt">has</span> <span class="nt">been</span> <span class="nt">renamed</span> <span class="nt">to</span> <span class="err">`</span><span class="nt">height</span><span class="err">`</span><span class="o">;</span> <span class="nt">pleaes</span> <span class="nt">update</span> <span class="nt">your</span> <span class="nt">code</span><span class="o">.</span>
+  <span class="nt">warnings</span><span class="p">.</span><span class="nc">warn</span><span class="o">(</span><span class="nt">msg</span><span class="o">,</span> <span class="nt">UserWarning</span><span class="o">)</span>
+
+
+
+
+
+<span class="o">&lt;</span><span class="nt">seaborn</span><span class="p">.</span><span class="nc">axisgrid</span><span class="p">.</span><span class="nc">PairGrid</span> <span class="nt">at</span> <span class="nt">0x7f739a8c2e80</span><span class="o">&gt;</span>
 </pre></div>
 
 
-<p><img alt="png" src="images/python_visualization_35_1.png"></p>
+<p><img alt="png" src="images/python_visualization_35_2.png"></p>
 <h2>facetgrid</h2>
 <p>To make histograms on subsets of categories.</p>
 <div class="highlight"><pre><span></span><span class="n">tips</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tips&#39;</span><span class="p">)</span>
-<span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">HTML</span><span class="p">(</span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -489,31 +447,16 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;tip_pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;tip&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">tips</span><span class="p">[</span><span class="s1">&#39;total_bill&#39;</span><span class="p">]</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -585,7 +528,6 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">tips</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">margin_titles</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">,</span> <span class="s1">&#39;tip_pct&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
@@ -593,7 +535,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x130396a0&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x7f739759b908&gt;
 </pre></div>
 
 
@@ -607,27 +549,18 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<p><img alt="png" src="images/python_visualization_44_0.png"></p>
-<div class="highlight"><pre><span></span><span class="n">planets</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;planets&#39;</span><span class="p">)</span>
-<span class="n">planets</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span>/home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`&#39;point&#39;`) has changed `&#39;strip&#39;` in `catplot`.
+  warnings.warn(msg)
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<p><img alt="png" src="images/python_visualization_44_1.png"></p>
+<div class="highlight"><pre><span></span><span class="n">planets</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;planets&#39;</span><span class="p">)</span>
+<span class="n">HTML</span><span class="p">(</span><span class="n">planets</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
+</pre></div>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -687,7 +620,6 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">):</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">planets</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
@@ -695,7 +627,12 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<p><img alt="png" src="images/python_visualization_46_0.png"></p>
+<div class="highlight"><pre><span></span>/home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`&#39;point&#39;`) has changed `&#39;strip&#39;` in `catplot`.
+  warnings.warn(msg)
+</pre></div>
+
+
+<p><img alt="png" src="images/python_visualization_46_1.png"></p>
 <div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">):</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">planets</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span>
                        <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">2015</span><span class="p">))</span>
@@ -703,27 +640,18 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<p><img alt="png" src="images/python_visualization_47_0.png"></p>
-<h2>lmplot</h2>
-<div class="highlight"><pre><span></span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span>/home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`&#39;point&#39;`) has changed `&#39;strip&#39;` in `catplot`.
+  warnings.warn(msg)
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<p><img alt="png" src="images/python_visualization_47_1.png"></p>
+<h2>lmplot</h2>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">tips</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
+</pre></div>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -795,13 +723,12 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;total_bill&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;tip&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tips</span><span class="p">)</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x15fba860&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x7f738f7a7940&gt;
 </pre></div>
 
 
@@ -811,7 +738,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x18c0a748&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x7f738eec9cc0&gt;
 </pre></div>
 
 
@@ -821,7 +748,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x18c76588&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x7f738eeb0c18&gt;
 </pre></div>
 
 
@@ -831,32 +758,18 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x1a3aecf8&gt;
+<div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.FacetGrid at 0x7f738ee00ba8&gt;
 </pre></div>
 
 
 <p><img alt="png" src="images/python_visualization_53_1.png"></p>
 <h2>heatmap</h2>
 <div class="highlight"><pre><span></span><span class="n">flights</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;flights&#39;</span><span class="p">)</span>
-<span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">HTML</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -898,31 +811,16 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;passengers&#39;</span><span class="p">)</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th>year</th>
@@ -1033,13 +931,12 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">flights</span><span class="p">)</span>
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1a69e438&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739410c6d8&gt;
 </pre></div>
 
 
@@ -1052,7 +949,7 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1829ecf8&gt;
+<div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f739420d898&gt;
 </pre></div>
 
 
@@ -1071,25 +968,11 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">cars</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">HTML</span><span class="p">(</span><span class="n">cars</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -1167,7 +1050,6 @@ Name: unemployment, dtype: float64
     </tr>
   </tbody>
 </table>
-</div>
 
 <div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
@@ -1177,11 +1059,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1c7f0f98&gt;
-</pre></div>
+<div class="vega-embed" id="a9bf100c-54ed-47e9-b4af-734ddfb94bbe"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_65_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_65_3.png"></p>
 <h2>Faceting</h2>
 <div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_circle</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
@@ -1191,11 +1096,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1da10748&gt;
-</pre></div>
+<div class="vega-embed" id="d2047693-0f3f-4835-83cd-9f0a3a35571b"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_67_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_67_3.png"></p>
 <p>Changing the opacity:</p>
 <div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_bar</span><span class="p">(</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
@@ -1205,11 +1133,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1c857a90&gt;
-</pre></div>
+<div class="vega-embed" id="683831da-2338-4f49-b8bd-b14d5509fd71"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_69_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_69_3.png"></p>
 <h2>Interactions</h2>
 <div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_point</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Horsepower&#39;</span><span class="p">,</span>
@@ -1219,11 +1170,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1cb3ffd0&gt;
-</pre></div>
+<div class="vega-embed" id="b707826a-64c3-4af4-ac37-cdd19a2b9cbb"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_71_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_71_3.png"></p>
 <h3>Selections</h3>
 <p>-<code>selection_single()</code>: selecting single element at a time</p>
 <p>-<code>selection_multi()</code>: selecting multiple items at once through clicking or mouseover</p>
@@ -1240,11 +1214,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1d5d82e8&gt;
-</pre></div>
+<div class="vega-embed" id="9b920447-7b4e-4e40-a892-44607043dc52"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_74_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_74_3.png"></p>
 <h2>histograms</h2>
 <p><code>count()</code> aggregation function</p>
 <div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span><span class="o">.</span><span class="n">mark_bar</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
@@ -1255,11 +1252,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1d3b62e8&gt;
-</pre></div>
+<div class="vega-embed" id="cff6dde3-c293-4506-9bf1-b6f3687d3464"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_77_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_77_3.png"></p>
 <h2>Layers</h2>
 <p>Layers with interaction:</p>
 <div class="highlight"><pre><span></span><span class="c1"># the &#39;empty&#39; setting akes all text hidden before any mouseover occurs</span>
@@ -1280,11 +1300,34 @@ Name: unemployment, dtype: float64
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>&lt;vega.vegalite.VegaLite at 0x1da10588&gt;
-</pre></div>
+<div class="vega-embed" id="46346015-4d71-45f7-af56-9dc9b9b96ac3"></div>
 
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
 
-<p><img alt="png" src="images/python_visualization_80_2.png"></p>
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+<p><img alt="png" src="images/python_visualization_80_3.png"></p>
  </div>
 </div>
  </div>

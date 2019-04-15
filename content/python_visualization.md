@@ -29,6 +29,7 @@ Altair is a declarative statistical visualization libary based on Vega and Vega-
 ```python
 import numpy as np
 import pandas as pd
+from IPython.display import HTML
 ```
 
 # Matplotlib
@@ -57,7 +58,7 @@ plt.ylabel('y')
 
 
 
-    Text(0,0.5,'y')
+    Text(0, 0.5, 'y')
 
 
 
@@ -85,9 +86,9 @@ plt.plot(x, y, 'r--', x, 10*y**2, 'cs', x, y**3, 'm^')
 
 
 
-    [<matplotlib.lines.Line2D at 0x1798d630>,
-     <matplotlib.lines.Line2D at 0x17a13128>,
-     <matplotlib.lines.Line2D at 0x17a13978>]
+    [<matplotlib.lines.Line2D at 0x7f739ab26630>,
+     <matplotlib.lines.Line2D at 0x7f739aaccc50>,
+     <matplotlib.lines.Line2D at 0x7f739aaccf98>]
 
 
 
@@ -114,7 +115,7 @@ df.plot() # plots the index against each column
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x8c71978>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739a773da0>
 
 
 
@@ -130,7 +131,7 @@ df.plot(x='x',y='y') # so we need to specify the axes
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x8f642e8>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739aa773c8>
 
 
 
@@ -146,7 +147,7 @@ df.plot(x='x', y='y', kind='scatter')
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0xa7e6898>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739a9e2f60>
 
 
 
@@ -163,27 +164,13 @@ df2 = pd.DataFrame({'country':['Australia', 'Australia', 'USA','USA','USA'],
 
 
 ```python
-df2
+HTML(df2.to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -225,7 +212,6 @@ df2
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -253,7 +239,7 @@ df2.groupby('country')['unemployment'].mean().plot(kind='bar')
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0xa743438>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739af3a518>
 
 
 
@@ -281,27 +267,13 @@ data = pd.DataFrame(data, columns=['x','y'])
 
 
 ```python
-data.head()
+HTML(data.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -312,32 +284,31 @@ data.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>3.287752</td>
-      <td>0.964413</td>
+      <td>-3.706836</td>
+      <td>-2.738933</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>-1.493281</td>
-      <td>-1.114161</td>
+      <td>1.862120</td>
+      <td>1.403838</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>1.473470</td>
-      <td>0.679222</td>
+      <td>-0.116846</td>
+      <td>-0.057492</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.760759</td>
-      <td>1.256521</td>
+      <td>0.598859</td>
+      <td>-0.080863</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>1.152063</td>
-      <td>0.595138</td>
+      <td>0.390465</td>
+      <td>0.250044</td>
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -347,8 +318,16 @@ for col in 'xy':
     plt.hist(data[col], normed=True, alpha=0.5)
 ```
 
+    /home/molly/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py:6521: MatplotlibDeprecationWarning: 
+    The 'normed' kwarg was deprecated in Matplotlib 2.1 and will be removed in 3.1. Use 'density' instead.
+      alternative="'density'", removal="3.1")
+    /home/molly/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py:6521: MatplotlibDeprecationWarning: 
+    The 'normed' kwarg was deprecated in Matplotlib 2.1 and will be removed in 3.1. Use 'density' instead.
+      alternative="'density'", removal="3.1")
 
-![png](images/python_visualization_26_0.png)
+
+
+![png](images/python_visualization_26_1.png)
 
 
 
@@ -359,7 +338,7 @@ sns.kdeplot(data['x'],data['y']) # if both cols passed at the same time
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0xd444e10>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f7398608588>
 
 
 
@@ -406,7 +385,7 @@ sns.jointplot('x','y', data, kind='kde')
 
 
 
-    <seaborn.axisgrid.JointGrid at 0x12e8f710>
+    <seaborn.axisgrid.JointGrid at 0x7f7398440d30>
 
 
 
@@ -421,27 +400,13 @@ Joint plots for more than two dimensions. Useful for exploring multivariate corr
 
 ```python
 iris = sns.load_dataset('iris')
-iris.head()
+HTML(iris.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -495,7 +460,6 @@ iris.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -504,15 +468,19 @@ iris.head()
 sns.pairplot(iris,hue='species',size=2.5)
 ```
 
+    /home/molly/anaconda3/lib/python3.7/site-packages/seaborn/axisgrid.py:2065: UserWarning: The `size` parameter has been renamed to `height`; pleaes update your code.
+      warnings.warn(msg, UserWarning)
 
 
 
-    <seaborn.axisgrid.PairGrid at 0x124c5a90>
+
+
+    <seaborn.axisgrid.PairGrid at 0x7f739a8c2e80>
 
 
 
 
-![png](images/python_visualization_35_1.png)
+![png](images/python_visualization_35_2.png)
 
 
 ## facetgrid
@@ -522,27 +490,13 @@ To make histograms on subsets of categories.
 
 ```python
 tips = sns.load_dataset('tips')
-tips.head()
+HTML(tips.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -608,7 +562,6 @@ tips.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -619,27 +572,13 @@ tips['tip_pct'] = 100*tips['tip']/tips['total_bill']
 
 
 ```python
-tips.head()
+HTML(tips.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -711,7 +650,6 @@ tips.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -725,7 +663,7 @@ grid.map(plt.hist, 'tip_pct', bins=np.linspace(0,40,15))
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x130396a0>
+    <seaborn.axisgrid.FacetGrid at 0x7f739759b908>
 
 
 
@@ -745,34 +683,24 @@ with sns.axes_style(style='ticks'): # applying the style to the whole block
     g.set_axis_labels('Day','Total Bill')
 ```
 
+    /home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`'point'`) has changed `'strip'` in `catplot`.
+      warnings.warn(msg)
 
-![png](images/python_visualization_44_0.png)
+
+
+![png](images/python_visualization_44_1.png)
 
 
 
 ```python
 planets = sns.load_dataset('planets')
-planets.head()
+HTML(planets.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -832,7 +760,6 @@ planets.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -843,8 +770,12 @@ with sns.axes_style('white'):
     g.set_xticklabels(step=5)
 ```
 
+    /home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`'point'`) has changed `'strip'` in `catplot`.
+      warnings.warn(msg)
 
-![png](images/python_visualization_46_0.png)
+
+
+![png](images/python_visualization_46_1.png)
 
 
 
@@ -855,35 +786,25 @@ with sns.axes_style('white'):
     g.set_ylabels('Number of Planets Discovered')
 ```
 
+    /home/molly/anaconda3/lib/python3.7/site-packages/seaborn/categorical.py:3666: UserWarning: The `factorplot` function has been renamed to `catplot`. The original name will be removed in a future release. Please update your code. Note that the default `kind` in `factorplot` (`'point'`) has changed `'strip'` in `catplot`.
+      warnings.warn(msg)
 
-![png](images/python_visualization_47_0.png)
+
+
+![png](images/python_visualization_47_1.png)
 
 
 ## lmplot
 
 
 ```python
-tips.head()
+HTML(tips.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -955,7 +876,6 @@ tips.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -967,7 +887,7 @@ sns.lmplot(x='total_bill', y = 'tip', data=tips)
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x15fba860>
+    <seaborn.axisgrid.FacetGrid at 0x7f738f7a7940>
 
 
 
@@ -984,7 +904,7 @@ sns.lmplot(x='total_bill', y = 'tip', hue='smoker', data=tips,
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x18c0a748>
+    <seaborn.axisgrid.FacetGrid at 0x7f738eec9cc0>
 
 
 
@@ -1001,7 +921,7 @@ sns.lmplot(x='total_bill', y = 'tip', hue='smoker', data=tips,
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x18c76588>
+    <seaborn.axisgrid.FacetGrid at 0x7f738eeb0c18>
 
 
 
@@ -1018,7 +938,7 @@ sns.lmplot(x='total_bill', y = 'tip', hue='day', col='day',
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x1a3aecf8>
+    <seaborn.axisgrid.FacetGrid at 0x7f738ee00ba8>
 
 
 
@@ -1031,27 +951,13 @@ sns.lmplot(x='total_bill', y = 'tip', hue='day', col='day',
 
 ```python
 flights = sns.load_dataset('flights')
-flights.head()
+HTML(flights.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -1093,7 +999,6 @@ flights.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -1104,27 +1009,13 @@ flights = flights.pivot(index='month', columns='year', values='passengers')
 
 
 ```python
-flights.head()
+HTML(flights.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th>year</th>
@@ -1235,7 +1126,6 @@ flights.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -1247,7 +1137,7 @@ sns.heatmap(flights)
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1a69e438>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739410c6d8>
 
 
 
@@ -1268,7 +1158,7 @@ sns.heatmap(df.corr(),cmap='coolwarm') # divergent color code
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1829ecf8>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f739420d898>
 
 
 
@@ -1298,27 +1188,13 @@ cars = alt.load_dataset('cars')
 
 
 ```python
-cars.head()
+HTML(cars.head().to_html(classes="table table-stripped table-hover"))
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1" class="dataframe table table-stripped table-hover">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -1396,7 +1272,6 @@ cars.head()
     </tr>
   </tbody>
 </table>
-</div>
 
 
 
@@ -1410,7 +1285,35 @@ alt.Chart(cars).mark_point().encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1c7f0f98>
+<div class="vega-embed" id="a9bf100c-54ed-47e9-b4af-734ddfb94bbe"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1421,7 +1324,7 @@ alt.Chart(cars).mark_point().encode(
 
 
 
-![png](images/python_visualization_65_2.png)
+![png](images/python_visualization_65_3.png)
 
 
 ## Faceting
@@ -1436,7 +1339,35 @@ alt.Chart(cars).mark_circle(opacity=0.5).encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1da10748>
+<div class="vega-embed" id="d2047693-0f3f-4835-83cd-9f0a3a35571b"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1447,7 +1378,7 @@ alt.Chart(cars).mark_circle(opacity=0.5).encode(
 
 
 
-![png](images/python_visualization_67_2.png)
+![png](images/python_visualization_67_3.png)
 
 
 Changing the opacity:
@@ -1462,7 +1393,35 @@ alt.Chart(cars).mark_bar(opacity=0.2).encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1c857a90>
+<div class="vega-embed" id="683831da-2338-4f49-b8bd-b14d5509fd71"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1473,7 +1432,7 @@ alt.Chart(cars).mark_bar(opacity=0.2).encode(
 
 
 
-![png](images/python_visualization_69_2.png)
+![png](images/python_visualization_69_3.png)
 
 
 ## Interactions
@@ -1488,7 +1447,35 @@ alt.Chart(cars).mark_point().encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1cb3ffd0>
+<div class="vega-embed" id="b707826a-64c3-4af4-ac37-cdd19a2b9cbb"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1499,7 +1486,7 @@ alt.Chart(cars).mark_point().encode(
 
 
 
-![png](images/python_visualization_71_2.png)
+![png](images/python_visualization_71_3.png)
 
 
 ### Selections
@@ -1524,7 +1511,35 @@ alt.Chart(cars).mark_point().encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1d5d82e8>
+<div class="vega-embed" id="9b920447-7b4e-4e40-a892-44607043dc52"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1535,7 +1550,7 @@ alt.Chart(cars).mark_point().encode(
 
 
 
-![png](images/python_visualization_74_2.png)
+![png](images/python_visualization_74_3.png)
 
 
 ## histograms
@@ -1552,7 +1567,35 @@ alt.Chart(cars).mark_bar().encode(
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1d3b62e8>
+<div class="vega-embed" id="cff6dde3-c293-4506-9bf1-b6f3687d3464"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1563,7 +1606,7 @@ alt.Chart(cars).mark_bar().encode(
 
 
 
-![png](images/python_visualization_77_2.png)
+![png](images/python_visualization_77_3.png)
 
 
 ## Layers
@@ -1590,7 +1633,35 @@ chart
 ```
 
 
-    <vega.vegalite.VegaLite at 0x1da10588>
+<div class="vega-embed" id="46346015-4d71-45f7-af56-9dc9b9b96ac3"></div>
+
+<style>
+.vega-embed .vega-actions > a {
+    transition: opacity 200ms ease-in;
+    opacity: 0.3;
+    margin-right: 0.6em;
+    color: #444;
+    text-decoration: none;
+}
+
+.vega-embed .vega-actions > a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.vega-embed:hover .vega-actions > a {
+    opacity: 1;
+    transition: 0s;
+}
+
+.vega-embed .error p {
+    color: firebrick;
+    font-size: 1.2em;
+}
+</style>
+
+
+
 
 
 
@@ -1601,4 +1672,4 @@ chart
 
 
 
-![png](images/python_visualization_80_2.png)
+![png](images/python_visualization_80_3.png)
