@@ -1,5 +1,5 @@
 Title: ROC-AUC Explained
-Date: 2019-03-12 10:20
+Date: 2019-04-14 10:20
 Tags: python
 Slug: blog-2
 
@@ -11,10 +11,45 @@ To explain ROC, first we need an understanding of the confusion matrix.
 
 For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  
 
-|    Mushrooms         |Actully Edible      |Actually Poisonous |
-|-------------------   |--------------      |------------------ |
-|Predicted Edible      |482 (TN) |6 (FN) |
-|Predicted Poisonous   |84 (FP) |428 (TP)|
+
+```python
+import pandas as pd
+from IPython.display import HTML
+mushrooms = pd.DataFrame({'Mushrooms':['Predicted Edible','Predicted Poisonous'],
+                         'Actually Edible':['482 (TN)','84 (FP)'],
+                         'Actually Poisonous':['6 (FN)', '428 (TP)']})
+
+HTML(mushrooms.to_html(classes="table table-stripped table-hover"))
+```
+
+
+
+
+<table border="1" class="dataframe table table-stripped table-hover">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Mushrooms</th>
+      <th>Actually Edible</th>
+      <th>Actually Poisonous</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Predicted Edible</td>
+      <td>482 (TN)</td>
+      <td>6 (FN)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Predicted Poisonous</td>
+      <td>84 (FP)</td>
+      <td>428 (TP)</td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -44,7 +79,6 @@ Now let's spin up some data to visualize the relationship between TN, TP, FN and
 
 ```python
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 %matplotlib inline
 import seaborn as sns
@@ -356,18 +390,6 @@ print(f'AUC={roc_auc_score(X1.label, X1.preds)}')
 
 Finally, per Max's request, I'm also going to show what is AOC (Area Over Curve). And that literally is:
 
-
-```python
-from IPython.display import Image
-# from IPython.core.display import HTML
-Image('AOC.jpg', width=100, height=100)
-```
-
-
-
-
-![jpeg](images/ROC_AUC_explained_52_0.jpeg)
-
-
+<img src="images/AOC.jpg" alt="AOC" height="300" width="300">
 
 Writing this post tremendously helped me understand the mechanism behind ROC. Hope it's helpful to you too.

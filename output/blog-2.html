@@ -13,32 +13,46 @@
 <div class="row">
  <div class="col-md-8">
   <h3>ROC-AUC Explained</h3>
-  <label>2019-03-12</label>
+  <label>2019-04-14</label>
   <p>ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encounter a ROC plot. This time I'm going to get to the bottom and get everything clear.  </p>
 <h3>Confusion Matrix</h3>
 <p>To explain ROC, first we need an understanding of the confusion matrix.</p>
 <p>For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  </p>
-<table>
-<thead>
-<tr>
-<th>Mushrooms</th>
-<th>Actully Edible</th>
-<th>Actually Poisonous</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Predicted Edible</td>
-<td>482 (TN)</td>
-<td>6 (FN)</td>
-</tr>
-<tr>
-<td>Predicted Poisonous</td>
-<td>84 (FP)</td>
-<td>428 (TP)</td>
-</tr>
-</tbody>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+<span class="n">mushrooms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Mushrooms&#39;</span><span class="p">:[</span><span class="s1">&#39;Predicted Edible&#39;</span><span class="p">,</span><span class="s1">&#39;Predicted Poisonous&#39;</span><span class="p">],</span>
+                         <span class="s1">&#39;Actually Edible&#39;</span><span class="p">:[</span><span class="s1">&#39;482 (TN)&#39;</span><span class="p">,</span><span class="s1">&#39;84 (FP)&#39;</span><span class="p">],</span>
+                         <span class="s1">&#39;Actually Poisonous&#39;</span><span class="p">:[</span><span class="s1">&#39;6 (FN)&#39;</span><span class="p">,</span> <span class="s1">&#39;428 (TP)&#39;</span><span class="p">]})</span>
+
+<span class="n">HTML</span><span class="p">(</span><span class="n">mushrooms</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<table border="1" class="dataframe table table-stripped table-hover">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Mushrooms</th>
+      <th>Actually Edible</th>
+      <th>Actually Poisonous</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Predicted Edible</td>
+      <td>482 (TN)</td>
+      <td>6 (FN)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Predicted Poisonous</td>
+      <td>84 (FP)</td>
+      <td>428 (TP)</td>
+    </tr>
+  </tbody>
 </table>
+
 <p>Here, the correct predictions are the 482 edible mushrooms that are predicted as edible, and the 428 poisonous mushrooms that are predicted as poisonous. So our accuracy is (482+428)/1000 = 91%. Suppose we call being poisonous a "positive" (more alarming) event, then the correctly identified poisonous mushrooms are True Positives (TP) and the correctly identified edible ones are True Negatives (TN). However, we are more concerned about the errors in this classification. We call the actually edible ones that got misclassified as poisonous the False Positives (FP) and the actually poisonous ones that are wrongfully predicted as edible the False Negatives (FN). In this case, the two types of errors are not equally costly, because the FPs are just a few edible mushroom that got thrown away, but the FNs are truly dangerous because eating one can be fatal.  </p>
 <h3>Sensitivity, Specificity, Precision, and F1 Score</h3>
 <p>Because different mistakes carry different costs (e.g., the FP and FN in the mushroom classfier), sometimes we want to minimize a certain type of error besides maximizing the overall accuracy. There are 4 types of measures that take into consideration of the errors:</p>
@@ -61,7 +75,6 @@
 <h3>Receiver Operating Characteristic Curve (ROC)</h3>
 <p>Now let's spin up some data to visualize the relationship between TN, TP, FN and FP. </p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
@@ -314,13 +327,7 @@ sens=0.398, spec=0.956
 
 <h3>AOC</h3>
 <p>Finally, per Max's request, I'm also going to show what is AOC (Area Over Curve). And that literally is:</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="c1"># from IPython.core.display import HTML</span>
-<span class="n">Image</span><span class="p">(</span><span class="s1">&#39;AOC.jpg&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</pre></div>
-
-
-<p><img alt="jpeg" src="images/ROC_AUC_explained_52_0.jpeg"></p>
+<p><img src="images/AOC.jpg" alt="AOC" height="300" width="300"></p>
 <p>Writing this post tremendously helped me understand the mechanism behind ROC. Hope it's helpful to you too.</p>
  </div>
 </div>
