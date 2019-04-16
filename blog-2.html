@@ -14,15 +14,15 @@
  <div class="col-md-8">
   <h3>ROC-AUC Explained</h3>
   <label>2019-04-14</label>
-  <p>ROC and AUC have long been the words I muddle through because deep down I knew I didn't have a clear understanding of what was happending behind the curves. I just relied on the rule that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC whenever I encountered a ROC plot. This time I'm going to get to the bottom and get everything clear.  </p>
+  <p>Receiver Operating Characteristic (ROC) curve and Area Under (the ROC) Curve (AUC) are frequently used metrics for evaluating models that distinguish between two categorical outcomes (e.g., survival of a patient, pass/fail of a test). The rule is that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC. However, the concept of ROC is not very straight forward and it took me some time to wrap my head around. Here I'll explain how it works with some simulated data and example, hoping to make the process easier to understand.</p>
 <h3>Confusion Matrix</h3>
 <p>To explain ROC, first we need an understanding of the confusion matrix.</p>
 <p>For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  </p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
 <span class="n">mushrooms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Mushrooms&#39;</span><span class="p">:[</span><span class="s1">&#39;Predicted Edible&#39;</span><span class="p">,</span><span class="s1">&#39;Predicted Poisonous&#39;</span><span class="p">],</span>
-                         <span class="s1">&#39;Actually Edible&#39;</span><span class="p">:[</span><span class="s1">&#39;482 (TN)&#39;</span><span class="p">,</span><span class="s1">&#39;84 (FP)&#39;</span><span class="p">],</span>
-                         <span class="s1">&#39;Actually Poisonous&#39;</span><span class="p">:[</span><span class="s1">&#39;6 (FN)&#39;</span><span class="p">,</span> <span class="s1">&#39;428 (TP)&#39;</span><span class="p">]})</span>
+                         <span class="s1">&#39;Actually Edible&#39;</span><span class="p">:[</span><span class="s1">&#39;482 (TP)&#39;</span><span class="p">,</span><span class="s1">&#39;84 (FN)&#39;</span><span class="p">],</span>
+                         <span class="s1">&#39;Actually Poisonous&#39;</span><span class="p">:[</span><span class="s1">&#39;6 (FP)&#39;</span><span class="p">,</span> <span class="s1">&#39;428 (TN)&#39;</span><span class="p">]})</span>
 
 <span class="n">HTML</span><span class="p">(</span><span class="n">mushrooms</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;table table-stripped table-hover&quot;</span><span class="p">))</span>
 </pre></div>
@@ -41,19 +41,19 @@
     <tr>
       <th>0</th>
       <td>Predicted Edible</td>
-      <td>482 (TN)</td>
-      <td>6 (FN)</td>
+      <td>482 (TP)</td>
+      <td>6 (FP)</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Predicted Poisonous</td>
-      <td>84 (FP)</td>
-      <td>428 (TP)</td>
+      <td>84 (FN)</td>
+      <td>428 (TN)</td>
     </tr>
   </tbody>
 </table>
 
-<p>Here, the correct predictions are the 482 edible mushrooms that are predicted as edible, and the 428 poisonous mushrooms that are predicted as poisonous. So our accuracy is (482+428)/1000 = 91%. Suppose we call being poisonous a "positive" (more alarming) event, then the correctly identified poisonous mushrooms are True Positives (TP) and the correctly identified edible ones are True Negatives (TN). However, we are more concerned about the errors in this classification. We call the actually edible ones that got misclassified as poisonous the False Positives (FP) and the actually poisonous ones that are wrongfully predicted as edible the False Negatives (FN). In this case, the two types of errors are not equally costly, because the FPs are just a few edible mushroom that got thrown away, but the FNs are truly dangerous because eating one can be fatal.  </p>
+<p>Here, the correct predictions are the 482 edible mushrooms that are predicted as edible, and the 428 poisonous mushrooms that are predicted as poisonous. So our accuracy is (482+428)/1000 = 91%. Suppose we call being edible a "positive" event, then the correctly identified edible mushrooms are True Positives (TP) and the correctly identified poisonous ones are True Negatives (TN). However, we are more concerned about the errors in this classification. We call the actually poisonous ones that got misclassified as edible the False Positives (FP) and the actually edible ones that are wrongfully predicted as poisonous the False Negatives (FN). In this case, the two types of errors are not equally costly, because the FNs are just a few edible mushroom that got thrown away, but the FPs are truly dangerous because eating one can be fatal.  </p>
 <h3>Sensitivity, Specificity, Precision, and F1 Score</h3>
 <p>Because different mistakes carry different costs (e.g., the FP and FN in the mushroom classfier), sometimes we want to minimize a certain type of error besides maximizing the overall accuracy. There are 4 types of measures that take into consideration of the errors:</p>
 <ul>
@@ -70,9 +70,8 @@
 <p><strong>F1 Score</strong> = 2Precision*Recall/(Precision+Recall)</p>
 </li>
 </ul>
-<p>Here, <strong>sensitivity</strong> is the true positive rate (also called <strong>recall</strong>), because it is the predicted positives over all the actual positives. <strong>Specificity</strong> is the true negative rate, as it is the predicted negatives over all the acutal negatives. <strong>Precision</strong> is the positive predictive value, since it is the true positives over all predicted positives. <strong>F1 score</strong> is the harmonic mean of the precision and recall, taking both FP and FN into account.</p>
-<p>The ROC is actually based on sensitivity and specificity.</p>
-<h3>Receiver Operating Characteristic Curve (ROC)</h3>
+<p>Here, <strong>sensitivity</strong> is the true positive rate (also called <strong>recall</strong>), because it is the predicted positives over all the actual positives. <strong>Specificity</strong> is the true negative rate, as it is the predicted negatives over all the acutal negatives. These are the two measures that ROC is built upon. For completeness, I've also included precision and F1 score, but they are not directly related to ROC curve. We can just know that <strong>precision</strong> is the positive predictive value, since it is the true positives over all predicted positives, and <strong>F1 score</strong> is the harmonic mean of the precision and recall, taking both FP and FN into account.</p>
+<h3>ROC Curve</h3>
 <p>Now let's spin up some data to visualize the relationship between TN, TP, FN and FP. </p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -119,7 +118,7 @@
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_16_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_15_0.png"></p>
 <p>We first generate two distributions using linear combination of random normal features whose means are symmetric to each other with respect to x=0. The data points in the first distribution are then assigned label value of 1, and the second 0. These are the true labels of the data points. Then we calculate the probability of each data point being classified as 1 or 0 using a logistic link. Plotting these probabilities, we can see that the first distribution (the Blue one) has a much higher frequency of being classified as 1, while the second distribution (the Orange one) has a much higher tendency of being classified as 0. The two distributions look quite separated, which is exactly what we want here because this indicates that the data can be separated well by a logistic classifier. We can then fit it into a logistic regression model to get the predicted probabilities and predicted labels needed to calculate TP, FP, TN, and FN.   </p>
 <div class="highlight"><pre><span></span><span class="c1"># prepare for training</span>
 <span class="k">def</span> <span class="nf">label_data</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
@@ -164,7 +163,7 @@
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_23_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_22_0.png"></p>
 <p>We can see that the model-predicted probabilites are similar to the probabilities we calculated using logit link when generating the data. Now, by default the model classifies any data point with a predicted probability larger than 0.5 as being in class 1, and else class 0. This can be visualized in the plot above, where the red dotted line is x=0.5. The right hand side of the blue distribution got correctly classifed as label 1, so they are the TPs. Similarly, the left hand side of the orange distribution got correctly classifed as label 0, thus the TNs. The right tail of the orange distribution are the ones that are actually label 0 but got predicted to be 1 because of their high probabilities; they are therefore the FPs. In the same fashion, the left tail of the blue distribution are the FNs.  </p>
 <p>We can obtain the TP, TN, FP and FN by calling confusion matrix directly from scikit learn modules to save some effors: </p>
 <div class="highlight"><pre><span></span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">X1</span><span class="o">.</span><span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -172,7 +171,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>tn=759, fp=241, fn=232, tp=768
+<div class="highlight"><pre><span></span>tn=756, fp=244, fn=239, tp=761
 </pre></div>
 
 
@@ -183,7 +182,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>sens=0.768, spec=0.759
+<div class="highlight"><pre><span></span>sens=0.761, spec=0.756
 </pre></div>
 
 
@@ -192,7 +191,7 @@
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_30_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_29_0.png"></p>
 <p>If we move the cut-off to x=0.8, for example, which means data points with a predicted probability equal to or higher than 0.8 of being in the label 1 class got classified as label 1, else label 0, then we will get a set of different classification results (in terms of TP, TN, FP and FN):</p>
 <div class="highlight"><pre><span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">predict_proba</span> <span class="o">&gt;=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">tn1</span><span class="p">,</span> <span class="n">fp1</span><span class="p">,</span> <span class="n">fn1</span><span class="p">,</span> <span class="n">tp1</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -203,8 +202,8 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>tn=956, fp=44, fn=602, tp=398
-sens=0.398, spec=0.956
+<div class="highlight"><pre><span></span>tn=954, fp=46, fn=607, tp=393
+sens=0.393, spec=0.954
 </pre></div>
 
 
@@ -214,7 +213,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_34_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_33_0.png"></p>
 <p>If we keep doing this for every possible cut-off value (i.e., ranging from x=0.0 to x=1.0), we will obtain a lot of points and when they connect and form a curve, we have the ROC. It indicates how well the two distributions are separated by our model. If the two distributions are very well separated (as there are very few FPs or FNs), the ROC will be higher close to the upper left corner, like this: </p>
 <div class="highlight"><pre><span></span><span class="c1"># define a function to plot ROC</span>
 <span class="k">def</span> <span class="nf">plot_roc</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -240,7 +239,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_37_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_36_0.png"></p>
 <div class="highlight"><pre><span></span><span class="c1"># plot the ROC</span>
 <span class="n">X2_train</span><span class="p">,</span> <span class="n">y2_train</span> <span class="o">=</span> <span class="n">label_data</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
 <span class="n">logreg</span><span class="p">(</span><span class="n">X2_train</span><span class="p">,</span> <span class="n">y2_train</span><span class="p">,</span> <span class="n">X2</span><span class="p">)</span>
@@ -248,7 +247,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_38_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_37_0.png"></p>
 <p>A ROC like this means the model is doing a good job separating the classes and the predictions are fairly accurate.</p>
 <p>If the model doesn't do a good job separating the two classes (i.e., a lot of FPs and FNs), the ROC will be close to the diagonal, like this:</p>
 <div class="highlight"><pre><span></span><span class="c1"># generate two distributions that are highly overlapped so they </span>
@@ -257,7 +256,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_41_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_40_0.png"></p>
 <div class="highlight"><pre><span></span><span class="c1"># plot the ROC</span>
 <span class="n">X3_train</span><span class="p">,</span> <span class="n">y3_train</span> <span class="o">=</span> <span class="n">label_data</span><span class="p">(</span><span class="n">X3</span><span class="p">)</span>
 <span class="n">logreg</span><span class="p">(</span><span class="n">X3_train</span><span class="p">,</span> <span class="n">y3_train</span><span class="p">,</span> <span class="n">X3</span><span class="p">)</span>
@@ -265,7 +264,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_42_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_41_0.png"></p>
 <p>A ROC close to the diagonal means that the model is performing poorly at separating the two classes and its predictions are almost like random guesses.</p>
 <p>A usual ROC generally looks like this:</p>
 <div class="highlight"><pre><span></span><span class="c1"># Create figure.</span>
@@ -312,7 +311,7 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<p><img alt="png" src="images/ROC_AUC_explained_45_0.png"></p>
+<p><img alt="png" src="images/ROC_AUC_explained_44_0.png"></p>
 <h3>Area Under Curve (AUC)</h3>
 <p>Now we are left with the final concept, AUC, which is the area under the ROC. It is a very straight forward measure of how well a model performs, because the higher up the ROC to the upper left corner, the larger the AUC will be. We want our model's AUC to be as large as possible, ranging from 0.5 to 1.0 where 0.5 is the worst model possible and 1.0 is a perfect classifier.</p>
 <p>We can obtain the AUC directly by calling scikit learn module:</p>
@@ -321,14 +320,14 @@ sens=0.398, spec=0.956
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>AUC=0.7635
+<div class="highlight"><pre><span></span>AUC=0.7585000000000001
 </pre></div>
 
 
-<h3>AOC</h3>
+<h3>Area Over Curve (AOC)</h3>
 <p>Finally, per Max's request, I'm also going to show what is AOC (Area Over Curve). And that literally is:</p>
 <p><img src="images/AOC.jpg" alt="AOC" height="300" width="300"></p>
-<p>Writing this post tremendously helped me understand the mechanism behind ROC. Hope it's helpful to you too.</p>
+<p>Note: The woman in the picture is Alexandria Ocasio-Cortez, also known by her initials, AOC, who is an American politician and member of the Democratic Party.</p>
  </div>
 </div>
  </div>
