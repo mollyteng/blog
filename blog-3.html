@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Evaluating Clustering Models</title>
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+ <div class="container">
+  <h1><a href="https://mollyteng.github.io/blog">mollyteng.github.io</a></h1>
+ </div>
+</head>
+<body>
+ <div class="container">
+<div class="row">
+ <div class="col-md-8">
+  <h3>Evaluating Clustering Models</h3>
+  <label>2019-04-21</label>
+  <p>This week I looked into some model evaluation metrics for clustering methods, which I'm going to summarize here. </p>
+<p>There are two situations when we are dealing with clustering model evaluation. The first one is simple, which is when our data has the ground truth attached to them (i.e., we have the true labels for group membership). In such case there are quite a few metrics we can use for model comparison. However, when our data doesn't have true labels, things become a little more complicated, but there is still some way which I'll talk about in the second part.  </p>
+<h1>When there are true labels</h1>
+<p>Given the knowledge of the ground truth class assignment, there are a number of metrics we can compute for clustering evaluation. I'll introduce the ones that are available in scikit learn modules.</p>
+<h2>Adjusted Rand index</h2>
+<p>The Adjusted Rand index is a function that measures the similarity of the two assignments ignoring permutations. It ranges from -1 to 1, with a value of 0 indicating random label assignment. Negative values are bad clustering results and positive values are good. A perfect match will result in a value of 1.0.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">labels_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">labels_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">adjusted_rand_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.24242424242424246
+</pre></div>
+
+
+<h2>Mutual Information (MI) based scores</h2>
+<p>The Mutual Information is also a function that measures the agreement of the two assignments ignoring permutations. A perfect labeling will return a score of 1.0, while bad labeling will return negative scores, and random labeling 0.0.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">labels_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">labels_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">adjusted_mutual_info_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span>  
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.2250422831983088
+</pre></div>
+
+
+<h2>Homogeneity, completeness and V-measure</h2>
+<p>Given the knowledge of the ground truth class assignments, we define homogeneity and completeness of clusters based on conditional entropy analysis:
+- homogeneity: each cluster contains only members of a single class
+- completeness: all members of a given class are assigned to the same cluster</p>
+<p>Both measures are bounded between 0.0 and 1.0, the higher the better.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">labels_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">labels_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">homogeneity_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span>  
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.6666666666666669
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">metrics</span><span class="o">.</span><span class="n">completeness_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.420619835714305
+</pre></div>
+
+
+<p>V-measure is the harmonic mean of homogeneity and completeness:</p>
+<div class="highlight"><pre><span></span><span class="n">metrics</span><span class="o">.</span><span class="n">v_measure_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span> 
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.5158037429793889
+</pre></div>
+
+
+<p>When we got a V-measure that is bad, we can look into the homogeneity and completeness scores to see what type of assignment mistakes there are. </p>
+<h2>Fowlkes-Mallows scores</h2>
+<p>The Fowlkes-Mallows index is the geometric mean of the pairwise precision and recall. It ranges from 0.0 to 1.0, with a higher value indicating good results.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">labels_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">labels_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">fowlkes_mallows_score</span><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels_pred</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.4714045207910317
+</pre></div>
+
+
+<h1>When there aren't true labels</h1>
+<p>When the ground truth labels are not known, evaluations are performed on the clustered data itself. This is also called internal evaluation schemes. The aim is to find sets of clusters that are compact, with a small variance within clusters and big variance between clusters. </p>
+<h2>Silhouette Coefficient</h2>
+<p>Silhouette Coefficient for a single data point is defined by $$s=\frac{b-a}{max(a,b)}$$ </p>
+<ul>
+<li>a: the mean distance between the point and all other points in the same class</li>
+<li>b: the mean distance between the point and all other points in the next nearest cluster </li>
+</ul>
+<p>The Silhouette Coefficient for a set of data points is the mean of the Silhouette Coefficient for each point. It is bounded between -1 and +1, with higher scores indicating denser and well-separated clustering. Scores around zero indicate overlapping clusters.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">pairwise_distances</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">target</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="n">kmeans_model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans_model</span><span class="o">.</span><span class="n">labels_</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.5528190123564091
+</pre></div>
+
+
+<h2>Calinski-Harabaz Index (aka Variance Ratio Criterion)</h2>
+<p>The Calinski-Harabaz index is also known as the Variance Ratio Criterion, which is used to evaluate clustering results when the ground truth labels are unknown. A higher value indicates a model with better defined clusters.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">pairwise_distances</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">target</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="n">kmeans_model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans_model</span><span class="o">.</span><span class="n">labels_</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">calinski_harabaz_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>561.62775662962
+</pre></div>
+
+
+<h2>Davies-Bouldin Index</h2>
+<p>The Davies-Bouldin index is also used when the ground truth labels are unknown. A lower value indicates a model with better separation results. Zero is the lowest possible score, and values closer to zero indicates better partitions.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">davies_bouldin_score</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels_</span>
+<span class="n">davies_bouldin_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>0.6619715465007511
+</pre></div>
+
+
+<h2>The Elbow method</h2>
+<p>Because a good clustering result will produce clusters that are compact, we can use the within cluster sums of squares (also called the Inertia score) as a measure of model evaluation. Since the more clusters we have, likely the smaller the inertia we will get, there is a trade-off between number of clusters and minimizing inertia score. We want to find a best point where we have reasonable number of clusters and the minimum inertia possible. The Elbow method plots the total inertia against the number of clusters, and chose a number of clusters so that adding another cluster doesn't reduce the total inertia much (i.e., the bend in the plot, the 'elbow').</p>
+<h2>Auxiliary supervised task</h2>
+<p>One more method is to set up a supervised learning algorithm as an auxiliary task to evaluate the performance of the unsupervised clustering algorithm. For example, after the unsupervised clustering algorithm produces several clusters, we can use these clusters as latent variables to feed into a supervised classifier to perform some task that is related to the domain the data comes from. The performance of the supervised method can then be used as a proxy of the performance of the unsupervised learner. A more concrete example looks like this (borrowed from https://stats.stackexchange.com/questions/79028/performance-metrics-to-evaluate-unsupervised-learning):</p>
+<ol>
+<li>Learn representations of words using an unsupervised learner.</li>
+<li>Use the learned representations as input for a supervised learner performing some NLP task like parts of speech tagging or named entity recognition.</li>
+<li>Assess the performance of the unsupervised learner by its ability to improve the performance of the supervised learner compared to a baseline using a standard representation, like binary word presence features, as input.</li>
+</ol>
+<p>As a conclusion, there is not and should not be a magic number that can summarize how well an unsupervised learning algorithm is performing without actually interpreting the results. Because "how well a particular unsupervised method performs will largely depend on why one is doing unsupervised learning in the first place".</p>
+ </div>
+</div>
+ </div>
+</body>
+</html>
