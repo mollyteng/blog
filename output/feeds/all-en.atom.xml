@@ -1,5 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>mollyteng.github.io</title><link href="https://mollyteng.github.io/blog/" rel="alternate"></link><link href="https://mollyteng.github.io/blog/feeds/all-en.atom.xml" rel="self"></link><id>https://mollyteng.github.io/blog/</id><updated>2019-04-14T10:20:00-04:00</updated><entry><title>ROC-AUC Explained</title><link href="https://mollyteng.github.io/blog/blog-2.html" rel="alternate"></link><published>2019-04-14T10:20:00-04:00</published><updated>2019-04-14T10:20:00-04:00</updated><author><name>Yue Teng</name></author><id>tag:mollyteng.github.io,2019-04-14:/blog/blog-2.html</id><summary type="html">&lt;p&gt;Receiver Operating Characteristic (ROC) curve and Area Under (the ROC) Curve (AUC) are frequently used metrics for evaluating models that distinguish between two categorical outcomes (e.g., survival of a patient, pass/fail of a test). The rule is that the higher up the curve (i.e., further away from …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Receiver Operating Characteristic (ROC) curve and Area Under (the ROC) Curve (AUC) are frequently used metrics for evaluating models that distinguish between two categorical outcomes (e.g., survival of a patient, pass/fail of a test). The rule is that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC. However, the concept of ROC is not very straight forward and it took me some time to wrap my head around. Here I'll explain how it works with some simulated data and example, hoping to make the process easier to understand.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>mollyteng.github.io</title><link href="https://mollyteng.github.io/blog/" rel="alternate"></link><link href="https://mollyteng.github.io/blog/feeds/all-en.atom.xml" rel="self"></link><id>https://mollyteng.github.io/blog/</id><updated>2019-04-21T10:20:00-04:00</updated><entry><title>Evaluating Clustering Models</title><link href="https://mollyteng.github.io/blog/blog-3.html" rel="alternate"></link><published>2019-04-21T10:20:00-04:00</published><updated>2019-04-21T10:20:00-04:00</updated><author><name>Yue Teng</name></author><id>tag:mollyteng.github.io,2019-04-21:/blog/blog-3.html</id><summary type="html">&lt;p&gt;This week I looked into some model evaluation metrics for clustering methods, which I'm going to summarize here. &lt;/p&gt;
+&lt;p&gt;There are two situations when we are dealing with clustering model evaluation. The first one is simple, which is when our data has the ground truth attached to them (i.e., we …&lt;/p&gt;</summary><content type="html">&lt;p&gt;This week I looked into some model evaluation metrics for clustering methods, which I'm going to summarize here. &lt;/p&gt;
+&lt;p&gt;There are two situations when we are dealing with clustering model evaluation. The first one is simple, which is when our data has the ground truth attached to them (i.e., we have the true labels for group membership). In such case there are quite a few metrics we can use for model comparison. However, when our data doesn't have true labels, things become a little more complicated, but there is still some way which I'll talk about in the second part.  &lt;/p&gt;
+&lt;h1&gt;When there are true labels&lt;/h1&gt;
+&lt;p&gt;Given the knowledge of the ground truth class assignment, there are a number of metrics we can compute for clustering evaluation. I'll introduce the ones that are available in scikit learn modules.&lt;/p&gt;
+&lt;h2&gt;Adjusted Rand index&lt;/h2&gt;
+&lt;p&gt;The Adjusted Rand index is a function that measures the similarity of the two assignments ignoring permutations. It ranges from -1 to 1, with a value of 0 indicating random label assignment. Negative values are bad clustering results and positive values are good. A perfect match will result in a value of 1.0.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="n"&gt;labels_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;labels_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;adjusted_rand_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.24242424242424246
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Mutual Information (MI) based scores&lt;/h2&gt;
+&lt;p&gt;The Mutual Information is also a function that measures the agreement of the two assignments ignoring permutations. A perfect labeling will return a score of 1.0, while bad labeling will return negative scores, and random labeling 0.0.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="n"&gt;labels_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;labels_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;adjusted_mutual_info_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.2250422831983088
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Homogeneity, completeness and V-measure&lt;/h2&gt;
+&lt;p&gt;Given the knowledge of the ground truth class assignments, we define homogeneity and completeness of clusters based on conditional entropy analysis:
+- homogeneity: each cluster contains only members of a single class
+- completeness: all members of a given class are assigned to the same cluster&lt;/p&gt;
+&lt;p&gt;Both measures are bounded between 0.0 and 1.0, the higher the better.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="n"&gt;labels_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;labels_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;homogeneity_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.6666666666666669
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;completeness_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.420619835714305
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;V-measure is the harmonic mean of homogeneity and completeness:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;v_measure_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.5158037429793889
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When we got a V-measure that is bad, we can look into the homogeneity and completeness scores to see what type of assignment mistakes there are. &lt;/p&gt;
+&lt;h2&gt;Fowlkes-Mallows scores&lt;/h2&gt;
+&lt;p&gt;The Fowlkes-Mallows index is the geometric mean of the pairwise precision and recall. It ranges from 0.0 to 1.0, with a higher value indicating good results.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="n"&gt;labels_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;labels_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fowlkes_mallows_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;labels_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.4714045207910317
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;When there aren't true labels&lt;/h1&gt;
+&lt;p&gt;When the ground truth labels are not known, evaluations are performed on the clustered data itself. This is also called internal evaluation schemes. The aim is to find sets of clusters that are compact, with a small variance within clusters and big variance between clusters. &lt;/p&gt;
+&lt;h2&gt;Silhouette Coefficient&lt;/h2&gt;
+&lt;p&gt;Silhouette Coefficient for a single data point is defined by $$s=\frac{b-a}{max(a,b)}$$ &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a: the mean distance between the point and all other points in the same class&lt;/li&gt;
+&lt;li&gt;b: the mean distance between the point and all other points in the next nearest cluster &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Silhouette Coefficient for a set of data points is the mean of the Silhouette Coefficient for each point. It is bounded between -1 and +1, with higher scores indicating denser and well-separated clustering. Scores around zero indicate overlapping clusters.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;pairwise_distances&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;
+&lt;span class="n"&gt;dataset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load_iris&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;
+&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.cluster&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;
+&lt;span class="n"&gt;kmeans_model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_clusters&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;labels&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;kmeans_model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;labels_&lt;/span&gt;
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;silhouette_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;metric&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;euclidean&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.5528190123564091
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Calinski-Harabaz Index (aka Variance Ratio Criterion)&lt;/h2&gt;
+&lt;p&gt;The Calinski-Harabaz index is also known as the Variance Ratio Criterion, which is used to evaluate clustering results when the ground truth labels are unknown. A higher value indicates a model with better defined clusters.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;pairwise_distances&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;
+&lt;span class="n"&gt;dataset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load_iris&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;
+&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.cluster&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;
+&lt;span class="n"&gt;kmeans_model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_clusters&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;labels&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;kmeans_model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;labels_&lt;/span&gt;
+&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;calinski_harabaz_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;561.62775662962
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Davies-Bouldin Index&lt;/h2&gt;
+&lt;p&gt;The Davies-Bouldin index is also used when the ground truth labels are unknown. A lower value indicates a model with better separation results. Zero is the lowest possible score, and values closer to zero indicates better partitions.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;
+&lt;span class="n"&gt;iris&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datasets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load_iris&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;iris&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.cluster&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;davies_bouldin_score&lt;/span&gt;
+&lt;span class="n"&gt;kmeans&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;KMeans&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_clusters&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;labels&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;kmeans&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;labels_&lt;/span&gt;
+&lt;span class="n"&gt;davies_bouldin_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;0.6619715465007511
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;The Elbow method&lt;/h2&gt;
+&lt;p&gt;Because a good clustering result will produce clusters that are compact, we can use the within cluster sums of squares (also called the Inertia score) as a measure of model evaluation. Since the more clusters we have, likely the smaller the inertia we will get, there is a trade-off between number of clusters and minimizing inertia score. We want to find a best point where we have reasonable number of clusters and the minimum inertia possible. The Elbow method plots the total inertia against the number of clusters, and chose a number of clusters so that adding another cluster doesn't reduce the total inertia much (i.e., the bend in the plot, the 'elbow').&lt;/p&gt;
+&lt;h2&gt;Auxiliary supervised task&lt;/h2&gt;
+&lt;p&gt;One more method is to set up a supervised learning algorithm as an auxiliary task to evaluate the performance of the unsupervised clustering algorithm. For example, after the unsupervised clustering algorithm produces several clusters, we can use these clusters as latent variables to feed into a supervised classifier to perform some task that is related to the domain the data comes from. The performance of the supervised method can then be used as a proxy of the performance of the unsupervised learner. A more concrete example looks like this (borrowed from https://stats.stackexchange.com/questions/79028/performance-metrics-to-evaluate-unsupervised-learning):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Learn representations of words using an unsupervised learner.&lt;/li&gt;
+&lt;li&gt;Use the learned representations as input for a supervised learner performing some NLP task like parts of speech tagging or named entity recognition.&lt;/li&gt;
+&lt;li&gt;Assess the performance of the unsupervised learner by its ability to improve the performance of the supervised learner compared to a baseline using a standard representation, like binary word presence features, as input.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As a conclusion, there is not and should not be a magic number that can summarize how well an unsupervised learning algorithm is performing without actually interpreting the results. Because "how well a particular unsupervised method performs will largely depend on why one is doing unsupervised learning in the first place".&lt;/p&gt;</content><category term="python"></category></entry><entry><title>ROC-AUC Explained</title><link href="https://mollyteng.github.io/blog/blog-2.html" rel="alternate"></link><published>2019-04-14T10:20:00-04:00</published><updated>2019-04-14T10:20:00-04:00</updated><author><name>Yue Teng</name></author><id>tag:mollyteng.github.io,2019-04-14:/blog/blog-2.html</id><summary type="html">&lt;p&gt;Receiver Operating Characteristic (ROC) curve and Area Under (the ROC) Curve (AUC) are frequently used metrics for evaluating models that distinguish between two categorical outcomes (e.g., survival of a patient, pass/fail of a test). The rule is that the higher up the curve (i.e., further away from …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Receiver Operating Characteristic (ROC) curve and Area Under (the ROC) Curve (AUC) are frequently used metrics for evaluating models that distinguish between two categorical outcomes (e.g., survival of a patient, pass/fail of a test). The rule is that the higher up the curve (i.e., further away from the diagonal) the better for ROC, and the closer to 1 the better for AUC. However, the concept of ROC is not very straight forward and it took me some time to wrap my head around. Here I'll explain how it works with some simulated data and example, hoping to make the process easier to understand.&lt;/p&gt;
 &lt;h3&gt;Confusion Matrix&lt;/h3&gt;
 &lt;p&gt;To explain ROC, first we need an understanding of the confusion matrix.&lt;/p&gt;
 &lt;p&gt;For example, suppose we are building a model to classify edible/poisonous mushrooms. We have 1000 mushrooms for which we know each of them is actually edible or not, and use these data to train a model that predicts the edibility based on their features like size, color, and smell. To evaluate the model's performance, we can compare the ground truth to the predictions made. The comparison will look something like this:  &lt;/p&gt;
